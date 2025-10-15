@@ -512,8 +512,8 @@ var MainView = Backbone.View.extend ({
       for (var i=0; i <5; i++) {
         var id1 = DotaBuffCP.lineup[i];
         var id3 = DotaBuffCP.lineup2[i];
-        nb1 += heroes_wr[id1];
-        nb2 += heroes_wr[id3];
+        nb1 += parseFloat(heroes_wr[id1]);
+        nb2 += parseFloat(heroes_wr[id3]);
         var nb1a = 0;
         var nb2a = 0;
         for (var j=0; j <5; j++) {   
@@ -559,6 +559,11 @@ var MainView = Backbone.View.extend ({
         "</div>" +
         "<div class='col-md-1 col-xs-1'></div>"
       );
+    } else {
+      // Clear scores when teams aren't complete
+      $('#score1').html('');
+      $('#score2').html('');
+      $('#total').html('');
     }
     
     
