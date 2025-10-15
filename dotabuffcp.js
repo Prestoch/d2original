@@ -652,8 +652,8 @@ var MainView = Backbone.View.extend ({
         var adv2Class = (advDisp2 < 0) ? 'alert alert-danger' : 'alert alert-success';
         var wr1Txt = this.getWrFor(id1, i).toFixed(2);
         var wr2Txt = this.getWrFor(id3, i+5).toFixed(2);
-        var line1a = "<span style='white-space:nowrap; font-size:12px'>" + wr1Txt + " + " + "<span class='" + adv1Class + "' style='padding:1px 5px; display:inline-block; font-size:12px'>" + advStr1 + "</span></span>";
-        var line1b = "<span style='white-space:nowrap; font-size:12px'>" + wr2Txt + " + " + "<span class='" + adv2Class + "' style='padding:1px 5px; display:inline-block; font-size:12px'>" + advStr2 + "</span></span>";
+        var line1a = "<span style='white-space:nowrap; font-size:14px'>" + wr1Txt + " + " + "<span class='" + adv1Class + "' style='padding:1px 5px; display:inline-block; font-size:12px'>" + advStr1 + "</span></span>";
+        var line1b = "<span style='white-space:nowrap; font-size:14px'>" + wr2Txt + " + " + "<span class='" + adv2Class + "' style='padding:1px 5px; display:inline-block; font-size:12px'>" + advStr2 + "</span></span>";
         var cell1 = "<div class='col-md-2 col-xs-2'>" + line1a + "</div>";
         var cell2 = "<div class='col-md-2 col-xs-2'>" + line1b + "</div>";
         data += cell1;
@@ -669,8 +669,8 @@ var MainView = Backbone.View.extend ({
       var wrClass = (wrdelta > 0) ? 'alert alert-success' : 'alert alert-danger';
       var changedelta = (nb1change - nb2change).toFixed(2);
       var changeClass = (changedelta > 0) ? 'alert alert-success' : 'alert alert-danger';
-      var wrBubble = "<span class='" + wrClass + "' style='display:inline-block; padding:4px 6px; margin:0; font-size:12px; white-space:nowrap'>= " + wrdelta + "</span>";
-      var changeBubble = "<span class='" + changeClass + "' style='display:inline-block; padding:4px 6px; margin:0; font-size:12px; white-space:nowrap'>Change Δ " + changedelta + "%</span>";
+      var wrBubble = "<span class='" + wrClass + "' style='display:inline-block; padding:2px 8px; margin:0; font-size:14px; white-space:nowrap'>= " + wrdelta + "</span>";
+      var changeBubble = "<span class='" + changeClass + "' style='display:inline-block; padding:2px 8px; margin:0; font-size:14px; white-space:nowrap'>Change Δ " + changedelta + "%</span>";
       $('#total').html(
         "<div class='col-md-1 col-xs-1'></div>" +
         "<div class='col-md-10 col-xs-10' style='display:flex; justify-content:center; align-items:center; gap:4px; margin-left:15px; flex-wrap:nowrap'>" +
