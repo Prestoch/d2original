@@ -652,8 +652,8 @@ var MainView = Backbone.View.extend ({
         var adv2Class = (advDisp2 < 0) ? 'alert alert-danger' : 'alert alert-success';
         var wr1Txt = this.getWrFor(id1, i).toFixed(2);
         var wr2Txt = this.getWrFor(id3, i+5).toFixed(2);
-        var line1a = "<span style='white-space:nowrap; font-size:14px'>" + wr1Txt + " + " + "<span class='" + adv1Class + "' style='padding:1px 5px; display:inline-block; font-size:12px'>" + advStr1 + "</span></span>";
-        var line1b = "<span style='white-space:nowrap; font-size:14px'>" + wr2Txt + " + " + "<span class='" + adv2Class + "' style='padding:1px 5px; display:inline-block; font-size:12px'>" + advStr2 + "</span></span>";
+        var line1a = "<span style='white-space:nowrap; font-size:14px'>" + wr1Txt + " + " + "<span class='" + adv1Class + "' style='padding:2px 8px; display:inline-block; font-size:14px'>" + advStr1 + "</span></span>";
+        var line1b = "<span style='white-space:nowrap; font-size:14px'>" + wr2Txt + " + " + "<span class='" + adv2Class + "' style='padding:2px 8px; display:inline-block; font-size:14px'>" + advStr2 + "</span></span>";
         var cell1 = "<div class='col-md-2 col-xs-2'>" + line1a + "</div>";
         var cell2 = "<div class='col-md-2 col-xs-2'>" + line1b + "</div>";
         data += cell1;
