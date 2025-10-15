@@ -9,11 +9,6 @@ var DotaBuffCP = {
     this.lineup = [ -1, -1, -1, -1, -1 ];
     this.lineup2 = [ -1, -1, -1, -1, -1 ];
     this.initialized = true;
-    // Initialize default roles per slot for both lineups
-    this.roles = [];
-    var __defaultRoles = ['carry','mid','offlane','softsupport','hardsupport'];
-    for (var __r = 0; __r < 10; ++__r) this.roles[__r] = __defaultRoles[__r % 5];
-    
   },
 
   heroId: function (name) {
@@ -276,37 +271,6 @@ if (typeof heroes_wr === 'undefined' || !Array.isArray(heroes_wr)) {
   }
 }
 
-// Backward compatibility: change stats from cs_db.json
-if (typeof heroes_roles_change === 'undefined' || typeof heroes_roles_change !== 'object') {
-  var heroes_roles_change = {};
-}
-var __roleKeys = ['carry','mid','offlane','softsupport','hardsupport'];
-for (var __rk = 0; __rk < __roleKeys.length; ++__rk) {
-  var __role = __roleKeys[__rk];
-  if (typeof heroes_roles_change[__role] === 'undefined') heroes_roles_change[__role] = {};
-  ['change'].forEach(function(k){
-    if (!Array.isArray(heroes_roles_change[__role][k])) {
-      heroes_roles_change[__role][k] = [];
-      if (typeof heroes !== 'undefined' && Array.isArray(heroes)) {
-        for (var __z = 0; __z < heroes.length; ++__z) heroes_roles_change[__role][k][__z] = '+0.00';
-      }
-    }
-  });
-}
-if (typeof heroes_roles_db_wr === 'undefined' || typeof heroes_roles_db_wr !== 'object') {
-  var heroes_roles_db_wr = {};
-}
-for (var __rk2 = 0; __rk2 < __roleKeys.length; ++__rk2) {
-  var __role2 = __roleKeys[__rk2];
-  if (typeof heroes_roles_db_wr[__role2] === 'undefined') heroes_roles_db_wr[__role2] = {};
-  if (!Array.isArray(heroes_roles_db_wr[__role2].wr)) {
-    heroes_roles_db_wr[__role2].wr = [];
-    if (typeof heroes !== 'undefined' && Array.isArray(heroes)) {
-      for (var __q = 0; __q < heroes.length; ++__q) heroes_roles_db_wr[__role2].wr[__q] = 50;
-    }
-  }
-}
-
 var MainView = Backbone.View.extend ({
 
   el: '#main-container',
@@ -329,7 +293,6 @@ var MainView = Backbone.View.extend ({
     'click #hero-search-reset': 'heroSearchReset',
     'click #hero-list li': 'addHero',
     'click div.lineup div.col-md-2 img': 'removeHero',
-    'change .hero-role-select': 'changeHeroRole',
     'click #reset-all': 'resetAll',
     'submit form': function () { return false; }
   },
@@ -404,83 +367,15 @@ var MainView = Backbone.View.extend ({
 
     // Both rows full? Can't add more heroes
     if (pick_i == -1) return;
-    //console.log(DotaBuffCP);
-    //console.log(heroes);
-    //console.log(win_rates);
-    //console.log(heroes_wr);
-    // Always assign default role by slot index on new pick
-    var slot = pick_i % 5;
-    var defaultRoles = ['carry','mid','offlane','softsupport','hardsupport'];
-    DotaBuffCP.roles[pick_i] = defaultRoles[slot];
-    var role = DotaBuffCP.roles[pick_i];
-    var changeVal = this.getChangeFor(hid, pick_i);
-    var selectHtml = this.roleSelectHtml(pick_i, role);
-    $('#hero-' + pick_i).html ("<div class='stats-label'><span class='change-label'>" + changeVal + "%</span></div>" + selectHtml
-                                         + "<img src='" + heroes_bg[hid] + "' data-idx='" + pick_i + "'>");
+
+    $('#hero-' + pick_i).html ("<img src='" + heroes_bg[hid] + "' data-idx='" + pick_i + "'>");
 
     this.calculateAndShow ();
     this.switchLink ();
   },
 
   addHeroToIndex: function (hid, pick_i) {
-    var slot = pick_i % 5;
-    var defaultRoles = ['carry','mid','offlane','softsupport','hardsupport'];
-    DotaBuffCP.roles[pick_i] = defaultRoles[slot];
-    var role = DotaBuffCP.roles[pick_i];
-    var changeVal = this.getChangeFor(hid, pick_i);
-    var selectHtml = this.roleSelectHtml(pick_i, role);
-    $('#hero-' + pick_i).html ("<div class='stats-label'><span class='change-label'>" + changeVal + "%</span></div>" + selectHtml
-                                         + "<img src='" + heroes_bg[hid] + "' data-idx='" + pick_i + "'>");
-  },
-
-  roleSelectHtml: function (idx, role) {
-    var opts = [
-      {v:'carry', t:'Carry'},
-      {v:'mid', t:'Mid'},
-      {v:'offlane', t:'Offlane'},
-      {v:'softsupport', t:'Soft'},
-      {v:'hardsupport', t:'Hard'}
-    ];
-    var html = "<select class='hero-role-select' data-idx='" + idx + "' style='font-size:10px; padding:0; margin:2px 0; width: 90px'>";
-    for (var i=0;i<opts.length;i++) {
-      var o=opts[i];
-      html += "<option value='" + o.v + "'" + (role===o.v?" selected":"") + ">" + o.t + "</option>";
-    }
-    html += "</select>";
-    return html;
-  },
-
-  getHeroIdAtSlot: function (idx) {
-    if (idx < 5) return DotaBuffCP.lineup[idx];
-    return DotaBuffCP.lineup2[idx-5];
-  },
-
-  getWrFor: function (heroId, idx) {
-    var role = DotaBuffCP.roles[idx];
-    var arr = heroes_roles_db_wr && heroes_roles_db_wr[role] && heroes_roles_db_wr[role].wr;
-    var v = arr && arr[heroId] != null ? arr[heroId] : 50;  // Default 50%
-    return parseFloat(v || 0);
-  },
-
-  getChangeFor: function (heroId, idx) {
-    var role = DotaBuffCP.roles[idx];
-    var arr = heroes_roles_change && heroes_roles_change[role] && heroes_roles_change[role].change;
-    var v = arr && arr[heroId] != null ? arr[heroId] : '+0.00';
-    // Parse the change value (e.g., "+6.52" or "-2.30")
-    return String(v);
-  },
-
-  changeHeroRole: function (ev) {
-    var idx = parseInt($(ev.currentTarget).attr('data-idx'), 10);
-    var role = $(ev.currentTarget).val();
-    DotaBuffCP.roles[idx] = role;
-    var hid = this.getHeroIdAtSlot(idx);
-    if (hid != -1) {
-      // Re-render the tile header labels only
-      var changeVal = this.getChangeFor(hid, idx);
-      $('#hero-' + idx + ' .stats-label').html("<span class='change-label'>" + changeVal + "%</span>");
-    }
-    this.calculateAndShow();
+    $('#hero-' + pick_i).html ("<img src='" + heroes_bg[hid] + "' data-idx='" + pick_i + "'>");
   },
 
   removeHero: function (ev) {
@@ -492,9 +387,6 @@ var MainView = Backbone.View.extend ({
     } else {
       DotaBuffCP.lineup2[i-5] = -1;
     }
-    
-    // Clear role (reset to default)
-    DotaBuffCP.roles[i] = 'carry';
     
     // Clear HTML
     $('#hero-' + i).html ('');
@@ -615,21 +507,13 @@ var MainView = Backbone.View.extend ({
     
 
     if (is_full) {
-      
-      var nb1change = 0.0;
-      var nb2change = 0.0;
       var sumNb1a = 0.0;
       var sumNb2a = 0.0;
       for (var i=0; i <5; i++) {
         var id1 = DotaBuffCP.lineup[i];
         var id3 = DotaBuffCP.lineup2[i];
-        nb1 += this.getWrFor(id1, i);
-        nb2 += this.getWrFor(id3, i+5);
-        // Parse change values (e.g., "+6.52" or "-2.30") to float
-        var change1Str = this.getChangeFor(id1, i);
-        var change2Str = this.getChangeFor(id3, i+5);
-        nb1change += parseFloat(change1Str) || 0;
-        nb2change += parseFloat(change2Str) || 0;
+        nb1 += heroes_wr[id1];
+        nb2 += heroes_wr[id3];
         var nb1a = 0;
         var nb2a = 0;
         for (var j=0; j <5; j++) {   
@@ -650,8 +534,8 @@ var MainView = Backbone.View.extend ({
         var advStr2 = (advDisp2 < 0 ? '-' : '') + Math.abs(advDisp2).toFixed(2);
         var adv1Class = (advDisp1 < 0) ? 'alert alert-danger' : 'alert alert-success';
         var adv2Class = (advDisp2 < 0) ? 'alert alert-danger' : 'alert alert-success';
-        var wr1Txt = this.getWrFor(id1, i).toFixed(2);
-        var wr2Txt = this.getWrFor(id3, i+5).toFixed(2);
+        var wr1Txt = heroes_wr[id1];
+        var wr2Txt = heroes_wr[id3];
         var line1a = "<span style='white-space:nowrap; font-size:12px'>" + wr1Txt + " + " + "<span class='" + adv1Class + "' style='padding:1px 5px; display:inline-block; font-size:12px'>" + advStr1 + "</span></span>";
         var line1b = "<span style='white-space:nowrap; font-size:12px'>" + wr2Txt + " + " + "<span class='" + adv2Class + "' style='padding:1px 5px; display:inline-block; font-size:12px'>" + advStr2 + "</span></span>";
         var cell1 = "<div class='col-md-2 col-xs-2'>" + line1a + "</div>";
@@ -667,14 +551,11 @@ var MainView = Backbone.View.extend ({
       $('#score2').html(data2 + rightSum2);
       var wrdelta = (nb1 - nb2).toFixed(2);
       var wrClass = (wrdelta > 0) ? 'alert alert-success' : 'alert alert-danger';
-      var changedelta = (nb1change - nb2change).toFixed(2);
-      var changeClass = (changedelta > 0) ? 'alert alert-success' : 'alert alert-danger';
       var wrBubble = "<span class='" + wrClass + "' style='display:inline-block; padding:4px 6px; margin:0; font-size:12px; white-space:nowrap'>= " + wrdelta + "</span>";
-      var changeBubble = "<span class='" + changeClass + "' style='display:inline-block; padding:4px 6px; margin:0; font-size:12px; white-space:nowrap'>Change Δ " + changedelta + "%</span>";
       $('#total').html(
         "<div class='col-md-1 col-xs-1'></div>" +
         "<div class='col-md-10 col-xs-10' style='display:flex; justify-content:center; align-items:center; gap:4px; margin-left:15px; flex-wrap:nowrap'>" +
-          wrBubble + changeBubble +
+          wrBubble +
         "</div>" +
         "<div class='col-md-1 col-xs-1'></div>"
       );
