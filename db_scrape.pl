@@ -20,7 +20,7 @@ sub norm{ my($t)=@_;$t//= ''; $t=~s/&[^;]+;//g;$t=~s/'//g;$t=~s/^\s+|\s+$//g;ret
 sub slug_from_name{ my($n)=@_;$n=~s/'//g;$n=~s/ /-/g;$n=~tr/[A-Z]/[a-z]/;return $n;}
 sub extract_header_wr{ my($h)=@_;return undef unless $h; my $s=$h; $s=$1 if $s=~m{^(.*?<table)}is; return $1 if $s=~m{<dt>\s*Win Rate\s*</dt>\s*<dd[^>]*>\s*(?:<span[^>]*class="(?:won|lost)"[^>]*>)?\s*([0-9]+(?:\.[0-9]+)?)%}is; return $1 if $s=~m{<dd[^>]*>\s*(?:<span[^>]*class="(?:won|lost)"[^>]*>)?\s*([0-9]+(?:\.[0-9]+)?)%\s*</dd>\s*<dt>\s*Win Rate\s*</dt>}is; return $2 if $s=~m{Win\s*Rate(.{0,400})<span[^>]*class="(?:won|lost)"[^>]*>\s*([0-9]+(?:\.[0-9]+)?)%}is; return $1 if $s=~m{<span[^>]*class="(?:won|lost)"[^>]*>\s*([0-9]+(?:\.[0-9]+)?)%}is; return undef;}
 
-my(@heroes,@heroes_bg,@heroes_wr,@win_rates,%slug_to_index,%db_roles_wr,%db_roles_change);
+my(@heroes,@heroes_bg,@heroes_wr,@win_rates,%slug_to_index,%db_roles_wr);
 
 sub get_heroes{
   warn "Fetching hero list and images from Dotabuff\n" if $DEBUG;
@@ -159,55 +159,6 @@ sub _parse_wr_map_from_html{
   return \%map;
 }
 
-sub _parse_change_map_from_html{
-  my($html)=@_;
-  my %map;
-  
-  # Meta page columns: Hero | Tier | Pick Rate | Change
-  while($html=~m{<tr[^>]*>(.*?)</tr>}sig){
-    my $row=$1;
-    my($slug)=$row=~m{href="(?:https?://www\.dotabuff\.com)?/heroes/([a-z0-9-]+)["#]}i;
-    next unless $slug;
-    
-    # Look for the Change percentage in the row
-    # Pattern: <span>NUMBER<!-- -->%</span> or <span>-NUMBER<!-- -->%</span>
-    # The sign might already be included in the span
-    my $change;
-    
-    # Try to find the change percentage - it's typically in a span after a chevron SVG icon
-    # Pattern 1: Number with sign already included (e.g., "-1.89")
-    if($row =~ m{<svg[^>]*lucide-square-chevron-(?:up|down)[^>]*>.*?</svg>\s*<span[^>]*>([\-+]?[0-9.]+)<!--[^>]*-->%</span>}is){
-      $change = $1;
-    }
-    # Pattern 2: In a div with color classes
-    elsif($row =~ m{tw-text-(?:green|red|stone)-\d+[^>]*>\s*<svg[^>]*lucide-square-chevron-(?:up|down)[^>]*>.*?</svg>\s*<span[^>]*>([\-+]?[0-9.]+)<!--[^>]*-->%</span>}is){
-      $change = $1;
-    }
-    # Pattern 3: Just look for the percentage in a span
-    elsif($row =~ m{tw-gap-2[^>]*>[^<]*<svg[^>]*>.*?</svg>\s*<span[^>]*>([\-+]?[0-9.]+)<!--[^>]*-->%}is){
-      $change = $1;
-    }
-    
-    if(defined $change){
-      # Check if sign is already included
-      if($change =~ m{^[\-+]}){
-        # Sign already present, use as-is
-        $map{$slug}={};
-        $map{$slug}{change}=sprintf('%.2f',$change+0) >= 0 ? sprintf('+%.2f',$change+0) : sprintf('%.2f',$change+0);
-      } else {
-        # No sign, determine based on chevron direction/color
-        my $sign = '+';
-        if($row =~ m{lucide-square-chevron-down}i || $row =~ m{tw-text-red-}i){
-          $sign = '-';
-        }
-        $map{$slug}={};
-        $map{$slug}{change}=sprintf('%s%.2f',$sign,$change+0);
-      }
-    }
-  }
-  
-  return \%map;
-}
 
 sub get_dotabuff_roles_wr{
   my %role_url = (
@@ -249,45 +200,6 @@ sub get_dotabuff_roles_wr{
   }
 }
 
-sub get_dotabuff_roles_change{
-  my %role_url = (
-    'core-mid'      => 'mid',
-    'core-safe'     => 'carry',
-    'core-off'      => 'offlane',
-    'support-safe'  => 'hardsupport',
-    'support-off'   => 'softsupport',
-  );
-  my $base='https://www.dotabuff.com/heroes?show=heroes&view=meta&mode=all-pick&date=1y&position=';
-  
-  for my $r (values %role_url){ $db_roles_change{$r}=[]; }
-  
-  while(my($pos,$role)=each %role_url){
-    my $url=$base.$pos;
-    warn "Fetching $role Change% from $url\n" if $DEBUG;
-    my $html=fetch_html($url);
-    
-    unless($html){
-      warn "Failed to fetch $role Change data\n" if $DEBUG;
-      # Fill with defaults
-      for(my $i=0;$i<@heroes;$i++){
-        $db_roles_change{$role}[$i] = '+0.00';
-      }
-      next;
-    }
-    
-    # Parse Change% from meta page
-    my $map=_parse_change_map_from_html($html);
-    
-    for(my $i=0;$i<@heroes;$i++){
-      my $slug=slug_from_name($heroes[$i]);
-      my $change = ($map->{$slug} && defined $map->{$slug}{change}) ? $map->{$slug}{change} : '+0.00';
-      
-      $db_roles_change{$role}[$i] = $change;
-    }
-    
-    warn "Parsed ".scalar(keys %$map)." heroes for $role (Change%)\n" if $DEBUG;
-  }
-}
 
 sub write_db_out{
   open my $fh,'>cs_db.json' or die $!;
@@ -303,12 +215,6 @@ sub write_db_out{
     $db_roles_out{$rk}{wr}=$db_roles_wr{$rk} if exists $db_roles_wr{$rk}; 
   }
   print $fh ', heroes_roles_db_wr = ',$j->encode(\%db_roles_out);
-  # Per-role Change% from Dotabuff meta pages
-  my %change_roles_out=(carry=>{},mid=>{},offlane=>{},softsupport=>{},hardsupport=>{});
-  for my $rk(keys %change_roles_out){ 
-    $change_roles_out{$rk}{change}=$db_roles_change{$rk} if exists $db_roles_change{$rk}; 
-  }
-  print $fh ', heroes_roles_change = ',$j->encode(\%change_roles_out);
   # Counter matchup matrix
   print $fh ', win_rates = ',$j->encode([@win_rates]);
   print $fh ', update_time = "',strftime("%Y-%m-%d",localtime),'";';
@@ -330,9 +236,7 @@ get_overall_winrates();
 warn "Fetching per-role WR...\n" if $DEBUG;
 get_dotabuff_roles_wr();
 
-# Get per-role Change% from meta pages
-warn "Fetching per-role Change%...\n" if $DEBUG;
-get_dotabuff_roles_change();
+# Removed Change% scraping and output
 
 # Get counter matchup data
 warn "Fetching counter matchups for ".scalar(@heroes)." heroes...\n" if $DEBUG;
