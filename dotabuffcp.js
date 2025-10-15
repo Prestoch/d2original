@@ -378,6 +378,17 @@ var MainView = Backbone.View.extend ({
     $('#hero-' + pick_i).html ("<img src='" + heroes_bg[hid] + "' data-idx='" + pick_i + "'>");
   },
 
+  updateHeroStats: function (pick_i, wr, adv) {
+    var advDisp = adv * -1;
+    var advStr = (advDisp < 0 ? '-' : '') + Math.abs(advDisp).toFixed(2);
+    var advClass = (advDisp < 0) ? 'alert alert-danger' : 'alert alert-success';
+    var statsHtml = "<div style='font-size:10px; text-align:center; margin-top:2px'>" +
+                    "<div>" + wr + "%</div>" +
+                    "<div class='" + advClass + "' style='padding:1px 3px; display:inline-block; margin-top:1px'>" + advStr + "</div>" +
+                    "</div>";
+    $('#hero-' + pick_i).append(statsHtml);
+  },
+
   removeHero: function (ev) {
     var i = parseInt($(ev.currentTarget).attr ('data-idx'), 10);
     
@@ -505,6 +516,23 @@ var MainView = Backbone.View.extend ({
     }
     
     
+
+    // Update individual hero stats for all heroes
+    for (var i = 0; i < 10; i++) {
+      var hid = (i < 5) ? DotaBuffCP.lineup[i] : DotaBuffCP.lineup2[i - 5];
+      if (hid != -1) {
+        // Calculate advantage for this hero against opposing team
+        var advantage = 0;
+        var opposingTeam = (i < 5) ? DotaBuffCP.lineup2 : DotaBuffCP.lineup;
+        for (var j = 0; j < 5; j++) {
+          var oppId = opposingTeam[j];
+          if (oppId != -1 && win_rates[oppId] && win_rates[oppId][hid]) {
+            advantage += parseFloat(win_rates[oppId][hid][0]) * -1;
+          }
+        }
+        this.updateHeroStats(i, heroes_wr[hid], advantage);
+      }
+    }
 
     if (is_full) {
       var sumNb1a = 0.0;
