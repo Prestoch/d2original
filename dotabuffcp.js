@@ -298,7 +298,14 @@ var MainView = Backbone.View.extend ({
   initialize: function () {
     this.$el.html (_.template ($('#main-view-template').html ()));
     DotaBuffCP.listHeroes ();
-    $('#hero-search').focus ();
+    // Avoid auto-focusing input on touch/iOS to keep pinch-zoom enabled
+    try {
+      var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints || 0) > 0 || (navigator.msMaxTouchPoints || 0) > 0;
+      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      if (!isTouch && !isIOS) {
+        $('#hero-search').focus();
+      }
+    } catch (e) {}
     var self = this;
     $(document).off('keydown.dotabuffcp');
     $(document).on('keydown.dotabuffcp', function (ev) {
@@ -355,7 +362,14 @@ var MainView = Backbone.View.extend ({
 
     this.heroSearchReset ();
     $('#hero-search').val ('');
-    $('#hero-search').focus ();
+    // Keep focus on desktops only; on mobile/iOS this can block pinch-zoom
+    try {
+      var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints || 0) > 0 || (navigator.msMaxTouchPoints || 0) > 0;
+      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      if (!isTouch && !isIOS) {
+        $('#hero-search').focus();
+      }
+    } catch (e) {}
 
     for (var i in DotaBuffCP.lineup)
       if (DotaBuffCP.lineup[i] == hid)
