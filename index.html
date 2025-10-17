@@ -388,10 +388,35 @@
 
   </script>
 
-  
+  <script>
+    (function () {
+      var viewport = document.querySelector('meta[name="viewport"]');
+      if (!viewport) return;
+      var base = 'width=device-width, initial-scale=1, user-scalable=yes, minimum-scale=0.5, maximum-scale=5, viewport-fit=cover, shrink-to-fit=no';
+      var boost = base.replace('maximum-scale=5', 'maximum-scale=10');
 
+      function set(content) { try { viewport.setAttribute('content', content); } catch (e) {} }
 
-  
+      // Ensure zoom is allowed immediately and stays allowed on iOS
+      set(base);
+      var allowZoom = function () { set(boost); setTimeout(function(){ set(base); }, 0); };
+      document.addEventListener('gesturestart', allowZoom, { passive: true });
+      document.addEventListener('gesturechange', allowZoom, { passive: true });
+      document.addEventListener('gestureend', function(){ set(base); }, { passive: true });
+      window.addEventListener('orientationchange', function(){ setTimeout(function(){ set(base); }, 0); });
+
+      // If on iOS, relax overflow so pinch-zoom isn't blocked by hidden overflow
+      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      if (isIOS) {
+        try {
+          document.addEventListener('DOMContentLoaded', function(){
+            document.body.style.overflowX = 'visible';
+            document.body.style.overflowY = 'auto';
+          });
+        } catch (e) {}
+      }
+    })();
+  </script>
 
   </body>
 </html>
