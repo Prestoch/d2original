@@ -26,26 +26,31 @@
        img {
          border: 1px solid #aaa;
          box-shadow: 2px 2px 8px 0px rgba(50, 50, 50, 0.38);
+         max-width: 100%;
+         height: auto;
        }
 
        .navbar {
          margin-bottom: 20px;
        }
 
-       div.main-wrapper {
-         width: 967px !important;
-         position: relative;
-         height: 100%;
-       }
+      div.main-wrapper {
+        width: 100%;
+        max-width: 967px;
+        margin: 0 auto;
+        position: relative;
+        height: 100%;
+      }
 
-       #main-container {
-         position: absolute;
-         bottom: 0;
-         top: 70px;
-         width: 967px !important;
-         padding-right: 30px;
-         overflow: visible;
-       }
+      #main-container {
+        position: absolute;
+        bottom: 0;
+        top: 70px;
+        width: 100%;
+        box-sizing: border-box;
+        padding-right: 30px;
+        overflow: visible;
+      }
 
        div.main-col {
          position: absolute;
@@ -265,6 +270,39 @@
          display: none;
        }
 
+    </style>
+    <style type="text/css">
+      /* Mobile adjustments */
+      @media (max-width: 767px) {
+        /* prevent accidental horizontal overflow */
+        html, body { width: 100%; }
+        body { overflow-x: hidden; overflow-y: auto; }
+
+        /* main containers scale to viewport */
+        div.main-wrapper { max-width: 100%; }
+        #main-container { padding-right: 15px; }
+
+        /* absolute columns edge insets */
+        div.second-col { right: 15px; }
+        #hero-list { right: 15px; }
+        #counters { left: 15px; right: 15px; }
+
+        /* remove desktop nudge that can cause overflow */
+        .lineup, #score1, #score2, #total { transform: none; }
+
+        /* allow counters to wrap into two columns */
+        #counters-scroll { flex-wrap: wrap; gap: 8px; }
+        #counters-scroll > .col-md-3,
+        #counters-scroll > .col-xs-3 { flex: 1 1 50%; min-width: 0; }
+
+        /* scale down imagery and typography */
+        #counters div.row img { max-width: 64px; }
+        #total .alert { font-size: 64px; }
+        #total .lane-bubble { font-size: 64px !important; }
+
+        /* wide FAQ padding can overflow small screens */
+        div.faq { padding: 0 16px; }
+      }
     </style>
   </head>
   <body>
