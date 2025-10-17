@@ -26,31 +26,26 @@
        img {
          border: 1px solid #aaa;
          box-shadow: 2px 2px 8px 0px rgba(50, 50, 50, 0.38);
-         max-width: 100%;
-         height: auto;
        }
 
        .navbar {
          margin-bottom: 20px;
        }
 
-      div.main-wrapper {
-        width: 100%;
-        max-width: 967px;
-        margin: 0 auto;
-        position: relative;
-        height: 100%;
-      }
+     div.main-wrapper {
+       width: 967px !important;
+       position: relative;
+       height: 100%;
+     }
 
-      #main-container {
-        position: absolute;
-        bottom: 0;
-        top: 70px;
-        width: 100%;
-        box-sizing: border-box;
-        padding-right: 30px;
-        overflow: visible;
-      }
+     #main-container {
+       position: absolute;
+       bottom: 0;
+       top: 70px;
+       width: 967px !important;
+       padding-right: 30px;
+       overflow: visible;
+     }
 
        div.main-col {
          position: absolute;
@@ -279,8 +274,11 @@
         body { overflow-x: hidden; overflow-y: auto; }
 
         /* main containers scale to viewport */
-        div.main-wrapper { max-width: 100%; }
-        #main-container { padding-right: 15px; }
+        div.main-wrapper { width: 100% !important; max-width: 100% !important; margin: 0; }
+        #main-container { width: 100% !important; box-sizing: border-box; padding-right: 15px; }
+
+        /* scale images within their containers on small screens */
+        img { max-width: 100%; height: auto; }
 
         /* absolute columns edge insets */
         div.second-col { right: 15px; }
