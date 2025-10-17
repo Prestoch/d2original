@@ -267,8 +267,8 @@
 
     </style>
     <style type="text/css">
-      /* Mobile adjustments */
-      @media (max-width: 767px) {
+     /* Mobile adjustments (touch devices or small device width) */
+     @media only screen and (max-device-width: 767px), only screen and (hover: none) and (pointer: coarse) {
         /* prevent accidental horizontal overflow */
         html, body { width: 100%; }
         body { overflow-x: hidden; overflow-y: auto; }
