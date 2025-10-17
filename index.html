@@ -266,42 +266,6 @@
        }
 
     </style>
-    <style type="text/css">
-     /* Mobile adjustments (touch devices or small device width) */
-     @media only screen and (max-device-width: 767px), only screen and (hover: none) and (pointer: coarse) {
-        /* prevent accidental horizontal overflow */
-        html, body { width: 100%; }
-        body { overflow-x: hidden; overflow-y: auto; }
-
-        /* main containers scale to viewport */
-        div.main-wrapper { width: 100% !important; max-width: 100% !important; margin: 0; }
-        #main-container { width: 100% !important; box-sizing: border-box; padding-right: 15px; }
-
-        /* scale images within their containers on small screens */
-        img { max-width: 100%; height: auto; }
-
-        /* absolute columns edge insets */
-        div.second-col { right: 15px; }
-        #hero-list { right: 15px; }
-        #counters { left: 15px; right: 15px; }
-
-        /* remove desktop nudge that can cause overflow */
-        .lineup, #score1, #score2, #total { transform: none; }
-
-        /* allow counters to wrap into two columns */
-        #counters-scroll { flex-wrap: wrap; gap: 8px; }
-        #counters-scroll > .col-md-3,
-        #counters-scroll > .col-xs-3 { flex: 1 1 50%; min-width: 0; }
-
-        /* scale down imagery and typography */
-        #counters div.row img { max-width: 64px; }
-        #total .alert { font-size: 64px; }
-        #total .lane-bubble { font-size: 64px !important; }
-
-        /* wide FAQ padding can overflow small screens */
-        div.faq { padding: 0 16px; }
-      }
-    </style>
   </head>
   <body>
 
