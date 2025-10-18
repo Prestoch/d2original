@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.25, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
     <meta name="description" content="Dota 2 Counter Picker and advantage browser based on DotaBuff.">
     <title>Counter Picker based on DotaBuff</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
@@ -34,20 +34,22 @@
          margin-bottom: 20px;
        }
 
-       div.main-wrapper {
-         width: 967px !important;
-         position: relative;
-         height: 100%;
-       }
+      div.main-wrapper {
+        max-width: 967px !important;
+        width: 100%;
+        margin: 0 auto;
+        position: relative;
+        height: 100%;
+      }
 
-       #main-container {
-         position: absolute;
-         bottom: 0;
-         top: 70px;
-         width: 967px !important;
-         padding-right: 30px;
-         overflow: visible;
-       }
+      #main-container {
+        position: absolute;
+        bottom: 0;
+        top: 70px;
+        width: 100% !important;
+        padding-right: 30px;
+        overflow: visible;
+      }
 
        div.main-col {
          position: absolute;
@@ -283,9 +285,14 @@
     <div class="navbar navbar-default" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-nav">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
           <a class="navbar-brand" href="#">DotaBuff CP</a>
         </div>
-        <div class="navbar-collapse collapse">
+        <div id="main-nav" class="navbar-collapse collapse in" aria-expanded="true" style="">
           <ul class="nav navbar-nav">
             <li><a href="https://github.com/onur/DotaBuffCP">GitHub</a></li>
           </ul>
