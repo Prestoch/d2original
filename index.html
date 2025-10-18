@@ -32,6 +32,18 @@
 
        .navbar {
          margin-bottom: 20px;
+         /* Keep navbar one line; prevent wrap/height growth on narrow viewports */
+         white-space: nowrap;
+         overflow: hidden;
+       }
+       /* Keep navbar layout from collapsing on small widths */
+       .navbar .navbar-header { float: left; }
+       .navbar .navbar-nav { float: left; margin: 0; }
+       .navbar .navbar-right { float: right !important; margin-right: 0; }
+       @media (max-width: 767px) {
+         .navbar .navbar-header { float: left; }
+         .navbar .navbar-nav { float: left; margin: 0; }
+         .navbar .navbar-right { float: right !important; margin-right: 0; }
        }
 
       div.main-wrapper {
