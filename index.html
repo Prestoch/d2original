@@ -44,10 +44,11 @@
          padding-top: 0;
          padding-bottom: 0;
        }
-       /* Navbar layout pinned via flex; brand left, version follows */
+       /* Navbar layout pinned via flex; brand left, version on right with consistent inset */
        .navbar .container-fluid { display: flex; align-items: center; justify-content: flex-start; }
        .navbar .navbar-header { float: none !important; flex: 0 0 auto; }
        .navbar .navbar-nav { display: flex; align-items: center; margin: 0 !important; padding: 0; }
+       .navbar .navbar-right { display: flex; align-items: center; margin-left: auto; margin-right: 15px; }
 
        /* Lock search field size regardless of viewport */
        form.hero-search-form .form-control#hero-search {
@@ -60,6 +61,7 @@
          .navbar .container-fluid { display: flex; align-items: center; justify-content: flex-start; }
          .navbar .navbar-header { flex: 0 0 auto; }
          .navbar .navbar-nav { display: flex; align-items: center; margin: 0 !important; padding: 0; }
+         .navbar .navbar-right { margin-left: auto !important; margin-right: 15px; }
          .navbar .nav > li > a { line-height: 50px; padding-top: 0; padding-bottom: 0; }
        }
 
@@ -315,7 +317,7 @@
         <div class="navbar-header">
           <a class="navbar-brand" href="#">DotaBuff CP</a>
         </div>
-          <ul class="nav navbar-nav">
+          <ul class="nav navbar-nav navbar-right">
             <li><a href="#" id="version"></a></li>
           </ul>
       </div><!--/.container-fluid -->
