@@ -44,10 +44,20 @@
          padding-top: 0;
          padding-bottom: 0;
        }
-       /* Keep brand left and version right using floats */
-       .navbar .navbar-header { float: left; }
-       .navbar .navbar-nav { float: left; margin: 0; }
-       .navbar .navbar-right { float: right !important; margin-right: 0; }
+       /* Navbar layout pinned via flex; brand left, links left, version right */
+       .navbar .container-fluid { display: flex; align-items: center; }
+       .navbar .navbar-header,
+       .navbar .navbar-nav,
+       .navbar .navbar-right { float: none !important; }
+       .navbar .navbar-nav { margin: 0; }
+       .navbar .navbar-right { margin-left: auto !important; margin-right: 0; }
+
+       /* Lock search field size regardless of viewport */
+       form.hero-search-form .form-control#hero-search {
+         width: 220px !important;
+         max-width: 220px;
+         min-width: 220px;
+       }
 
       div.main-wrapper {
         width: 967px !important;
