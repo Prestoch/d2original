@@ -20,7 +20,9 @@
 
       body {
         padding: 20px 0 0 0;
-        overflow: hidden;
+        /* Allow panning/scrolling on iOS when zoomed */
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
        img {
@@ -59,13 +61,16 @@
         top: 0;
         right: 30px;
         overflow: visible;
+        /* Ensure iOS allows panning within this column */
+        -webkit-overflow-scrolling: touch;
       }
 
-       #hero-list {
+      #hero-list {
          position: absolute;
          top: 50px;
          bottom: 0;
-         overflow-y: auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
          left: 15px;
          right: 20px;
        }
@@ -116,6 +121,7 @@
         overflow-y: auto;
         overflow-x: hidden;
         padding-right: 20px;
+        -webkit-overflow-scrolling: touch;
       }
       #counters-scroll { height: auto; overflow: visible; padding-right: 0; margin-left: 0; margin-right: 0; }
 
