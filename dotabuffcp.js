@@ -353,7 +353,8 @@ var MainView = Backbone.View.extend ({
     var hid = $(ev.currentTarget).attr ('data-hero-id');
     var pick_i = -1;
 
-    // Keep the current search text and cursor focused so users can add multiple heroes quickly
+    this.heroSearchReset ();
+    $('#hero-search').val ('');
     $('#hero-search').focus ();
 
     for (var i in DotaBuffCP.lineup)
@@ -401,8 +402,6 @@ var MainView = Backbone.View.extend ({
 
     this.calculateAndShow ();
     this.switchLink ();
-    // Ensure the search input retains focus after selection on iOS
-    setTimeout(function(){ try { var el = document.getElementById('hero-search'); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } } catch(e){} }, 0);
   },
 
   addHeroToIndex: function (hid, pick_i) {
