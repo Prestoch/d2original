@@ -259,11 +259,9 @@ var DotaBuffCP = {
   },
 
   getVersion: function () {
-    var suffix = (typeof update_time !== 'undefined' && update_time != null && update_time !== '')
-      ? ('' + update_time)
-      : '';
-    if (!suffix) return this.VERSION;
-    return this.VERSION + '.' + suffix;
+
+    return this.VERSION + '.' + update_time;
+
   }
 
 };
