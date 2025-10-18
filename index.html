@@ -46,11 +46,11 @@
        }
        /* Precise right spacing for version link */
        .navbar #version { margin-right: 20px !important; }
-       /* Navbar layout pinned via flex; brand left, version right (Bootstrap default offsets) */
+       /* Navbar layout pinned via flex; brand left, version right with 20px inset */
        .navbar .container-fluid { display: flex; align-items: center; }
        .navbar .navbar-header { flex: 0 0 auto; }
        .navbar .navbar-nav { display: flex; align-items: center; margin: 0; padding: 0; }
-       .navbar .navbar-right { margin-left: auto; }
+       .navbar .navbar-right { margin-left: auto; margin-right: 20px !important; }
 
        /* Lock search field size regardless of viewport */
        form.hero-search-form .form-control#hero-search {
@@ -63,7 +63,7 @@
          .navbar .container-fluid { display: flex; align-items: center; justify-content: flex-start; }
          .navbar .navbar-header { flex: 0 0 auto; }
          .navbar .navbar-nav { display: flex; align-items: center; margin: 0; padding: 0; }
-         .navbar .navbar-right { margin-left: auto; }
+         .navbar .navbar-right { margin-left: auto; margin-right: 20px !important; }
          .navbar .nav > li > a { line-height: 50px; padding-top: 0; padding-bottom: 0; }
        }
 
