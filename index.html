@@ -32,19 +32,22 @@
 
        .navbar {
          margin-bottom: 20px;
-         /* Keep navbar one line; prevent wrap/height growth on narrow viewports */
-         white-space: nowrap;
+         /* Fixed height navbar; clip overflow instead of wrapping */
+         height: 50px;
+         min-height: 50px;
          overflow: hidden;
        }
-       /* Keep navbar layout from collapsing on small widths */
+       /* Align brand and links within fixed height */
+       .navbar .navbar-brand,
+       .navbar .nav > li > a {
+         line-height: 50px;
+         padding-top: 0;
+         padding-bottom: 0;
+       }
+       /* Keep brand left and version right using floats */
        .navbar .navbar-header { float: left; }
        .navbar .navbar-nav { float: left; margin: 0; }
        .navbar .navbar-right { float: right !important; margin-right: 0; }
-       @media (max-width: 767px) {
-         .navbar .navbar-header { float: left; }
-         .navbar .navbar-nav { float: left; margin: 0; }
-         .navbar .navbar-right { float: right !important; margin-right: 0; }
-       }
 
       div.main-wrapper {
         width: 967px !important;
